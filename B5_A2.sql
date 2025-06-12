@@ -23,6 +23,8 @@ INSERT INTO rangers (ranger_name, region) VALUES
 ('Tania Begum', 'River Edge Zone'),
 ('Elias Mollah', 'Mangrove Belt');
 
+SELECT * FROM rangers
+
 
 
 
@@ -51,6 +53,8 @@ INSERT INTO species (common_name, scientific_name, discovery_date, conservation_
 ('Asian Black Bear', 'Ursus thibetanus', '1923', 'Vulnerable'),
 ('Indian Star Tortoise', 'Geochelone elegans', '1802', 'Vulnerable');
 
+SELECT * FROM species
+
 
 
 
@@ -77,3 +81,111 @@ INSERT INTO sightings (ranger_id, species_id, sighting_time, location, notes) VA
 (1, 7, '2025-06-08 14:35:00', 'South Zone', 'Running across open space'),
 (8, 10, '2025-06-09 10:05:00', 'Mangrove Belt',NULL),
 (5, 8, '2025-06-10 15:25:00', 'Wildlife Core', 'Bird flying low');
+
+SELECT * FROM sightings
+
+
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~1
+INSERT INTO rangers(ranger_name,region) VALUES('Derek Fox', 'Coastal Plains')
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~2
+SELECT count(DISTINCT species_id) FROM sightings
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~3
+SELECT * FROM sightings WHERE location LIKE '%Pass'
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~4
+SELECT ranger_name, count(sighting_id) FROM rangers INNER JOIN sightings ON rangers.ranger_id = sightings.ranger_id GROUP BY rangers.ranger_name
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~5
+SELECT common_name FROM species LEFT JOIN sightings ON species.species_id = sightings.species_id WHERE sightings.species_id is NULL
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~6
+SELECT common_name,sighting_time,ranger_name FROM sightings JOIN species ON sightings.species_id  = species.species_id JOIN rangers on sightings.ranger_id = rangers.ranger_id
+ORDER BY sightings.sighting_time DESC LIMIT 2;
+
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~7
+UPDATE species SET conservation_status = 'Historic' WHERE CAST (discovery_date AS INTEGER) <1800
+
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~8
+SELECT count(sighting_id),
+CASE 
+  WHEN extract(HOUR FROM sighting_time) < 12 THEN 'Morning'
+  WHEN EXTRACT(HOUR FROM sighting_time) BETWEEN 12 and 17 THEN 'Afternoon'
+  else 'evening'
+END as time_of_day FROM sightings GROUP BY time_of_day;
+
+
+
+
+
+
+
+
+
+--```````````````````````````````````````````````````problem~9
+DELETE FROM rangers WHERE ranger_id NOT IN(SELECT DISTINCT ranger_id FROM sightings)
